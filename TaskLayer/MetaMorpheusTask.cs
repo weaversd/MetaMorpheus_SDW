@@ -593,7 +593,7 @@ namespace TaskLayer
             return lib;
         }
 
-        protected static List<Protein> LoadProteinDb(string fileName, bool generateTargets, DecoyType decoyType, List<string> localizeableModificationTypes, bool isContaminant, out Dictionary<string, Modification> um,
+        public static List<Protein> LoadProteinDb(string fileName, bool generateTargets, DecoyType decoyType, List<string> localizeableModificationTypes, bool isContaminant, out Dictionary<string, Modification> um,
             out int emptyEntriesCount, CommonParameters commonParameters)
         {
             List<string> dbErrors = new List<string>();

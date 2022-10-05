@@ -27,9 +27,11 @@ namespace GuiFunctions
     {
         public ObservableCollection<string> PsmResultFilePaths { get; private set; }
         public ObservableCollection<string> SpectraFilePaths { get; private set; }
+        public ObservableCollection<string> PeptideFilePaths { get; private set; }
         public ObservableCollection<string> SpectralLibraryPaths { get; private set; }
         public ObservableCollection<PsmFromTsv> FilteredListOfPsms { get; private set; } // filtered list of PSMs after q-value filter, etc.
         public Dictionary<string, ObservableCollection<PsmFromTsv>> PsmsGroupedByFile { get; private set; }
+        public Dictionary<string, ObservableCollection<PeptideFromTsv>> PeptidesGroupedByFile { get; private set; }
         public DrawnSequence StationarySequence { get; set; }
         public DrawnSequence ScrollableSequence { get; set; }
         public DrawnSequence SequenceAnnotation { get; set; }
@@ -910,6 +912,42 @@ namespace GuiFunctions
 
             FilterPsms();
         }
+
+        private void LoadPeptides(out List<string> errors, bool haveLoadedSpectra)
+        {
+            errors = new List<string>();
+
+            HashSet<string> fileNamesWithoutExtension = new HashSet<string>(
+                PeptideFilePaths.Select(p => System.IO.Path.GetFileName(p.Replace(GlobalVariables.GetFileExtension(p), string.Empty))));
+
+            try
+            {
+                foreach (var resultsFile in PeptideFilePaths)
+                {
+                    lock (ThreadLocker)
+                    {
+                        foreach (PeptideFromTsv peptide in PeptideTsvReader.ReadTsv(resultsFile, out List<string> warnings))
+                        {
+                            if (PeptidesGroupedByFile.TryGetValue(peptide.FileNameWithoutExtension, out var peptidesForThisFile))
+                            {
+                                peptidesForThisFile.Add(peptide);
+                            }
+                            else
+                            {
+                                PeptidesGroupedByFile.Add(peptide.FileNameWithoutExtension, new ObservableCollection<PeptideFromTsv> { peptide });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                errors.Add("Error reading Peptide file:\n" + e.Message);
+            }
+
+            FilterPsms();
+        }
+
 
         private void LoadSpectraFiles(out List<string> errors)
         {

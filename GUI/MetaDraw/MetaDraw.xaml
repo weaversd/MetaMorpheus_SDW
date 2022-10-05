@@ -541,7 +541,9 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="29"/>
                                 <RowDefinition Height="29"/>
-                                <RowDefinition Height="50*"/>
+                                <RowDefinition Height="10*"/>
+                                <RowDefinition Height="29"/>
+                                <RowDefinition Height="29"/>
                                 <RowDefinition Height="40*"/>
                                 <RowDefinition Height="25"/>
                             </Grid.RowDefinitions>
@@ -560,9 +562,9 @@
                                 <Button Name="loadFilesStatCoverage" Content="Import AllQuantifiedPeptides.tsv" Width="200" Click="loadFilesButtonStat_Click"/>
                             </DockPanel>
 
-                            <!--Select psms to display by source file-->
+                            <!--Select Proteins to display by source file-->
                             <DockPanel Grid.Row="2">
-                                <Label Content="Source file(s): " Width="80" VerticalAlignment="Top"/>
+                                <Label Content="Sample(s): " Width="80" VerticalAlignment="Top"/>
                                 <DockPanel VerticalAlignment="Top">
                                     <DockPanel DockPanel.Dock="Bottom">
                                         <Button x:Name="selectAllCoverageSourceFiles" HorizontalAlignment="Left" Content="Select all" Click="selectAllSourceFiles_Click"/>
@@ -572,12 +574,42 @@
                                 </DockPanel>
                             </DockPanel>
 
-                            <!--List of plot options-->
-                            <GroupBox Header="Plot Type" Name="plotTypeCoverage" Grid.Row="3">
-                                <ListView x:Name="plotsListBoxCoverage" ItemsSource="{Binding}" SelectionChanged ="PlotSelected" MaxHeight="400"/>
-                            </GroupBox>
+                            <!--Select Database file-->
+                            <DockPanel Grid.Row="3" LastChildFill="True">
+                                <Label Content="Database file: " Width="80" />
+                                <Button Name="resetDatabaseFileButtonStat" Content="Reset" DockPanel.Dock="Right" Click="resetFilesButton_Click" Width="45" IsEnabled="False"/>
+                                <Button Name="selectDatabaseFileButtonStat" Content="Select" DockPanel.Dock="Right" Click="selectPsmFileButton_Click" Width="45" />
+                                <Label BorderThickness="1">
+                                    <TextBlock Name="DatabaseFileNameLabelStat" Text="None Selected" TextTrimming="CharacterEllipsis"/>
+                                </Label>
+                            </DockPanel>
 
                             <DockPanel Grid.Row="4" Margin="2">
+                                <Button Name="loadFilesStatDatabase" Content="Import Database" Width="200" Click="loadFilesButtonStat_Click"/>
+                            </DockPanel>
+
+                            <GroupBox Header="Proteins" Name="gbProteins" Grid.Row="5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <DataGrid x:Name="dataGridProteinNums" Grid.Row="0" AutoGenerateColumns="False" VerticalAlignment="Stretch" ItemsSource="{Binding}"
+                                              ScrollViewer.CanContentScroll="True" IsReadOnly="True" Margin="0,0,0,0" SelectedCellsChanged="dataGridScanNums_SelectedCellsChanged" 
+                                              CanUserDeleteRows="false" CanUserAddRows="false" >
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Protein Name" Binding="{Binding ProteinName}" Width="100" 
+                                                                />
+                                            <DataGridTextColumn Header="Organism Name" Binding="{Binding OrganismName}" Width="100" />
+                                            <DataGridTextColumn Header="% Coverage" Binding="{Binding OrganismName}" Width="100" />
+                                            <DataGridTextColumn Header="MetaMorpheus Score" Binding="{Binding Score}" 
+                                                                ElementStyle="{StaticResource DataGridCenteredCellStyle}"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                            </GroupBox>
+
+                            <DockPanel Grid.Row="7" Margin="2">
                                 <Button Content="Export to PDF" Width="100" Click="CreatePlotPdf_Click" />
                             </DockPanel>
                         </Grid>
